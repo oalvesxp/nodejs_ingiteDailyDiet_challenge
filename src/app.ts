@@ -8,7 +8,7 @@ app.register(cookie)
 
 /** Log for requests API */
 app.addHook('preHandler', async (req) => {
-    console.log(`[(${req.method} ${req.url}]`)
+    console.log(`[${req.method}] ${req.url}`)
 })
 
 app.register(usersRoutes, {
