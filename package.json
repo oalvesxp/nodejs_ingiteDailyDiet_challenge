@@ -1,0 +1,35 @@
+{
+  "name": "ingite_daily_diet",
+  "version": "1.0.0",
+  "description": "Desafio do módulo de Rotas e HTTP de Node.js do curso da Rocketseat.",
+  "engines": {
+    "node": "20.18.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "test": "vitest --run",
+    "knex": "node --import tsx ./node_modules/knex/bin/cli.js",
+    "build": "tsup src --out-dir build"
+  },
+  "keywords": [],
+  "author": "Osvaldo A. Neto",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/supertest": "^6.0.2",
+    "sqlite3": "^5.1.7",
+    "supertest": "^7.0.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.1",
+    "dotenv": "^16.4.5",
+    "fastify": "^5.1.0",
+    "knex": "^3.1.0",
+    "pg": "^8.13.1",
+    "zod": "^3.23.8"
+  }
+}
