@@ -7,7 +7,7 @@ export async function usersRoutes(app: FastifyInstance) {
   app.post('/', async (req, rep) => {
     const createUsersBodySchema = z.object({
       name: z.string(),
-      email: z.string().email()
+      email: z.string().email(),
     })
 
     let { sessionId } = req.cookies
@@ -24,7 +24,7 @@ export async function usersRoutes(app: FastifyInstance) {
       id: randomUUID(),
       session_id: sessionId,
       name,
-      email
+      email,
     })
 
     return rep.status(201).send()
