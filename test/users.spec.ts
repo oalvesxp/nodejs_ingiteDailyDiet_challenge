@@ -8,21 +8,21 @@ describe('Users routes', () => {
     await app.ready()
   })
 
-  beforeEach(async () => {
-    execSync('npm run knex -- migrate:rollback')
-    execSync('npm run knex -- migrate:latest')
-  })
-
   afterAll(async () => {
     await app.close()
+  })
+
+  beforeEach(() => {
+    execSync('npm run knex -- migrate:rollback')
+    execSync('npm run knex -- migrate:latest')
   })
 
   it('Should be able to create a new user', async () => {
     await request(app.server)
       .post('/users')
       .send({
-        name: 'Jhon Doe',
-        email: 'jhon.doe@example.com',
+        name: 'Jane Doe',
+        email: 'jane.doe@example.com',
       })
       .expect(201)
   })
