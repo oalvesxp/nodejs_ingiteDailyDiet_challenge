@@ -10,6 +10,7 @@ export async function usersRoutes(app: FastifyInstance) {
       email: z.string().email(),
     })
 
+    /** Check if the user already have cookies */
     let { sessionId } = req.cookies
     if (!sessionId) {
       sessionId = randomUUID()
@@ -20,6 +21,13 @@ export async function usersRoutes(app: FastifyInstance) {
     }
 
     const { name, email } = createUsersBodySchema.parse(req.body)
+
+    /** Checks if the user is already registered */
+    const userByEmail = await knex('users').where({ email }).first()
+    if (userByEmail) {
+      return rep.status(400).send({ message: 'User already exists' })
+    }
+
     await knex('users').insert({
       id: randomUUID(),
       session_id: sessionId,
