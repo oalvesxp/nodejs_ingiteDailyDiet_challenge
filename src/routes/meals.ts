@@ -30,7 +30,9 @@ export async function mealsRoutes(app: FastifyInstance) {
   })
 
   app.get('/', { preHandler: [checkSessionIdExists] }, async (req, rep) => {
-    const meals = await knex('meals').where({ user_id: req.user?.id })
+    const meals = await knex('meals')
+      .where({ user_id: req.user?.id })
+      .orderBy('date', 'desc')
 
     return rep.status(200).send({ meals })
   })
