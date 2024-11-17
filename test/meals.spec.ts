@@ -82,4 +82,48 @@ describe('Meals routes', () => {
     expect(getMealsResponse.body.meals[0].name).toBe('Lunch')
     expect(getMealsResponse.body.meals[1].name).toBe('Breakfast')
   })
+
+  it('Should be able to list a meal from a user by ID', async () => {
+    const createUserResponse = await request(app.server)
+      .post('/users')
+      .send({
+        name: 'Jane Doe',
+        email: 'jane.doe@example.com',
+      })
+      .expect(201)
+
+    const cookies: string[] | undefined = createUserResponse.get('Set-Cookie')
+
+    await request(app.server)
+      .post('/meals')
+      .set('Cookie', cookies || [])
+      .send({
+        name: 'Breakfast',
+        description: "It's a breakfast",
+        isOnDiet: true,
+        date: new Date(),
+      })
+      .expect(201)
+
+    const getMealsResponse = await request(app.server)
+      .get('/meals')
+      .set('Cookie', cookies || [])
+      .send()
+
+    const id = getMealsResponse.body.meals[0].id
+
+    const getMealResponse = await request(app.server)
+      .get(`/meals/${id}`)
+      .set('Cookie', cookies || [])
+      .send()
+      .expect(200)
+    expect(getMealResponse.body).toEqual({
+      meal: expect.objectContaining({
+        name: 'Breakfast',
+        description: "It's a breakfast",
+        is_on_diet: 1,
+        date: expect.any(Number),
+      }),
+    })
+  })
 })
