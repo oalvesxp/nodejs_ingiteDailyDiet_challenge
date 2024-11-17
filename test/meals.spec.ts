@@ -1,4 +1,4 @@
-import { it, describe, beforeAll, beforeEach, afterAll } from 'vitest'
+import { it, describe, beforeAll, beforeEach, afterAll, expect } from 'vitest'
 import { execSync } from 'node:child_process'
 import { app } from '../src/app'
 import request from 'supertest'
@@ -38,5 +38,48 @@ describe('Meals routes', () => {
         date: new Date(),
       })
       .expect(201)
+  })
+
+  it('Should be able to list all meals from a user', async () => {
+    const createUserResponse = await request(app.server)
+      .post('/users')
+      .send({
+        name: 'Jhon Doe',
+        email: 'jhon.doe@example.com',
+      })
+      .expect(201)
+
+    const cookies: string[] | undefined = createUserResponse.get('Set-Cookie')
+
+    await request(app.server)
+      .post('/meals')
+      .set('Cookie', cookies ?? [])
+      .send({
+        name: 'Breakfast',
+        description: "It's a breakfast",
+        isOnDiet: true,
+        date: new Date(),
+      })
+      .expect(201)
+
+    await request(app.server)
+      .post('/meals')
+      .set('Cookie', cookies ?? [])
+      .send({
+        name: 'Lunch',
+        description: "It's a lunch",
+        isOnDiet: false,
+        date: new Date(Date.now() + 24 * 60 * 60), // 1 day after
+      })
+      .expect(201)
+
+    const getMealsResponse = await request(app.server)
+      .get('/meals')
+      .set('Cookie', cookies || [])
+      .expect(200)
+
+    expect(getMealsResponse.body.meals).toHaveLength(2)
+    expect(getMealsResponse.body.meals[0].name).toBe('Lunch')
+    expect(getMealsResponse.body.meals[1].name).toBe('Breakfast')
   })
 })
