@@ -47,6 +47,58 @@ export async function mealsRoutes(app: FastifyInstance) {
     return rep.status(200).send({ meal })
   })
 
+  app.get(
+    '/metrics',
+    { preHandler: [checkSessionIdExists] },
+    async (req, rep) => {
+      const totalMeals = await knex('meals')
+        .where({ user_id: req.user?.id })
+        .orderBy('date', 'desc')
+
+      const totalMealsOnDiet = await knex('meals')
+        .where({
+          user_id: req.user?.id,
+          is_on_diet: true,
+        })
+        .count('id', { as: 'total' })
+        .first()
+
+      const totalMealsOffDiet = await knex('meals')
+        .where({
+          user_id: req.user?.id,
+          is_on_diet: false,
+        })
+        .count('id', { as: 'total' })
+        .first()
+
+      const { bestOnDietSequence } = totalMeals.reduce(
+        (acc, meal) => {
+          if (meal.is_on_diet) {
+            acc.sequence += 1
+          } else {
+            acc.sequence = 0
+          }
+
+          if (acc.sequence > acc.bestOnDietSequence) {
+            acc.bestOnDietSequence = acc.sequence
+          }
+
+          return acc
+        },
+        { bestOnDietSequence: 0, sequence: 0 },
+      )
+
+      return rep.status(200).send({
+        metrics: {
+          totalMeals: totalMeals.length,
+          totalMealsOnDiet: totalMealsOnDiet?.total,
+          totalMealsOffDiet: totalMealsOffDiet?.total,
+          bestOnDietSequence,
+        },
+      })
+    },
+  )
+
   app.put('/:id', { preHandler: [checkSessionIdExists] }, async (req, rep) => {
     const paramsSchema = z.object({ id: z.string().uuid() })
     const { id } = paramsSchema.parse(req.params)
