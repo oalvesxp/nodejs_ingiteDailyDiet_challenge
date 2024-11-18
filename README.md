@@ -29,3 +29,12 @@ Nesse desafio desenvolveremos uma API para controle de dieta diária, a Daily Di
 
 É comum ao estar desenvolvendo uma API, imaginar como esses dados vão estar sendo utilizados pelo cliente web e/ou mobile. </br>
 Por isso, deixamos abaixo o link para o layout da aplicação que utilizaria essa API: [Daily Diet Layout](https://www.figma.com/community/file/1218573349379609244)
+
+### Como usar?
+
+Baixa este repositório e no seu terminal, entre no diretório
+
+1. Instale as dependências `npm install`
+2. Configure o `.env` (copie o arquivo `.env.example`)
+3. Aplique as confiugrações do bando de dados `npm run knex -- migrate:latest`
+4. Inicie o servidor `npm run dev`
