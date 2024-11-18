@@ -72,4 +72,21 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     return rep.status(204).send()
   })
+
+  app.delete(
+    '/:id',
+    { preHandler: [checkSessionIdExists] },
+    async (req, rep) => {
+      const paramsSchema = z.object({ id: z.string().uuid() })
+      const { id } = paramsSchema.parse(req.params)
+
+      const getMealResponse = await knex('meals').where({ id }).first()
+      if (!getMealResponse)
+        return rep.status(404).send({ error: 'Meal not found' })
+
+      await knex('meals').where({ id }).delete()
+
+      return rep.status(204).send()
+    },
+  )
 }
